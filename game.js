@@ -138,11 +138,11 @@ function serveBall() {
     ball.y = playerPaddle.y - 30;
     ball.z = 20;
 
-    // Random serve direction
-    const angle = (Math.random() - 0.5) * 0.5;
-    ball.speedX = Math.sin(angle) * 5;
-    ball.speedY = -8 - Math.random() * 2;
-    ball.speedZ = 2;
+    // Realistic serve velocity (3-4 px/frame horizontal, 2-3 px/frame vertical)
+    const angle = (Math.random() - 0.5) * 0.3;
+    ball.speedX = 3 + Math.random();  // 3-4 px/frame
+    ball.speedY = -(2 + Math.random()); // -2 to -3 px/frame
+    ball.speedZ = 1.5;
 
     playServeSound();
 }
@@ -329,6 +329,10 @@ function updateBall() {
     ball.y += ball.speedY;
     ball.z += ball.speedZ;
 
+    // Apply air resistance (mild damping for lighter, more natural feel)
+    ball.speedX *= 0.995;
+    ball.speedY *= 0.995;
+
     // Table collision (bounce)
     if (ball.z <= 0 && ball.speedZ < 0) {
         ball.z = 0;
@@ -384,21 +388,31 @@ function checkPaddleCollision(paddle, isPlayer) {
         const hitAI = !isPlayer && ball.speedY < 0;
 
         if (hitPlayer || hitAI) {
-            // Calculate bounce angle based on hit position
+            // Calculate bounce angle based on hit position (more gentle)
             const hitAngle = (ball.x - paddle.x) / paddle.radius;
 
-            ball.speedX = hitAngle * 6;
-            ball.speedY *= -1.1;
-            ball.speedZ = 3 + Math.abs(hitAngle) * 2;
+            // Set more realistic paddle hit velocities
+            ball.speedX = hitAngle * 3;  // Reduced from 6 to 3
+            ball.speedY *= -1;  // Simple reversal, no multiplication
+            ball.speedZ = 2 + Math.abs(hitAngle);  // Reduced upward bounce
 
-            // Add some randomness
-            ball.speedX += (Math.random() - 0.5) * 2;
-            ball.speedY += (Math.random() - 0.5);
+            // Add minimal randomness for natural variation
+            ball.speedX += (Math.random() - 0.5) * 0.5;
+            ball.speedY += (Math.random() - 0.5) * 0.3;
 
-            // Decrease speed slightly with each paddle hit (slow down by 5%)
-            const speedMultiplier = 0.95;
+            // Slight acceleration after long rallies (5% increase)
+            const speedMultiplier = 1.05;
             ball.speedX *= speedMultiplier;
             ball.speedY *= speedMultiplier;
+
+            // Cap velocity at 8 px/frame in any direction
+            const maxSpeed = 8;
+            if (Math.abs(ball.speedX) > maxSpeed) {
+                ball.speedX = Math.sign(ball.speedX) * maxSpeed;
+            }
+            if (Math.abs(ball.speedY) > maxSpeed) {
+                ball.speedY = Math.sign(ball.speedY) * maxSpeed;
+            }
 
             playPaddleHitSound();
 
