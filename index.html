@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First-Person Ping Pong Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="scoreboard">
+            <div class="player-info">
+                <div class="avatar player-avatar">P</div>
+                <div class="score" id="player-score">0</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="player-info">
+                <div class="avatar ai-avatar">AI</div>
+                <div class="score" id="ai-score">0</div>
+            </div>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="instructions">
+            <p>Move mouse to control paddle</p>
+            <p>Click to serve</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
