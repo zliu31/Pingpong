@@ -11,8 +11,7 @@ const game = {
     playerScore: 0,
     aiScore: 0,
     isServing: true,
-    ballInPlay: false,
-    gameSpeed: 1
+    ballInPlay: false
 };
 
 // Table dimensions (3D perspective)
@@ -396,8 +395,8 @@ function checkPaddleCollision(paddle, isPlayer) {
             ball.speedX += (Math.random() - 0.5) * 2;
             ball.speedY += (Math.random() - 0.5);
 
-            // Increase speed slightly over time
-            const speedMultiplier = 1 + game.gameSpeed * 0.05;
+            // Decrease speed slightly with each paddle hit (slow down by 5%)
+            const speedMultiplier = 0.95;
             ball.speedX *= speedMultiplier;
             ball.speedY *= speedMultiplier;
 
@@ -409,8 +408,6 @@ function checkPaddleCollision(paddle, isPlayer) {
             } else {
                 ball.y = paddle.y + paddle.radius + ball.radius;
             }
-
-            game.gameSpeed += 0.1;
         }
     }
 }
@@ -453,7 +450,6 @@ function scorePoint(scorer) {
 function resetBall() {
     game.isServing = true;
     game.ballInPlay = false;
-    game.gameSpeed = 1;
 
     ball.x = canvas.width / 2;
     ball.y = canvas.height - 100;
